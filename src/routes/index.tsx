@@ -29,7 +29,7 @@ function Index() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
             Register, pay, and lock in your seat for the batch trip on{" "}
-            <span className="text-foreground">{TRIP.date}</span>. Eight buses, fifty seats each — first paid, first served.
+            <span className="text-foreground">{TRIP.date}</span>. Eight buses, fifty-four seats each — first paid, first served.
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-3">
@@ -45,7 +45,7 @@ function Index() {
         <section className="mx-auto mt-20 grid max-w-5xl gap-4 sm:grid-cols-3">
           {[
             { icon: CalendarDays, title: TRIP.date, sub: "Trip date" },
-            { icon: Bus, title: "8 buses · 400 seats", sub: "Live availability" },
+            { icon: Bus, title: "8 buses · 432 seats", sub: "Live availability" },
             { icon: Ticket, title: "Rs. 3,000 total", sub: "Advance + Final" },
           ].map((f) => (
             <div key={f.title} className="glass-card rounded-2xl p-6">

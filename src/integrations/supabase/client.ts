@@ -15,7 +15,16 @@ function createSupabaseClient() {
     ];
     const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
     console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    
+    // Only throw in the browser to prevent crashing the server-side build or SSR processes
+    if (typeof window !== 'undefined') {
+      throw new Error(message);
+    }
+    
+    // Return a dummy client for the server/SSR to bypass startup crashes
+    return createClient<Database>('https://placeholder.supabase.co', 'sb_publishable_placeholder', {
+      auth: { persistSession: false }
+    });
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
