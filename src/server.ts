@@ -37,11 +37,14 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+import { withSupabase } from "@supabase/server";
+
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown) {
+  fetch: withSupabase({ auth: "none" }, async (request, supabaseCtx) => {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      // Pass the supabase context to the React Start handler
+      const response = await handler.fetch(request, {}, supabaseCtx);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
@@ -50,5 +53,6 @@ export default {
         headers: { "content-type": "text/html; charset=utf-8" },
       });
     }
-  },
+  }),
 };
+

@@ -1,1 +1,4 @@
-project_id = "yuthyfqqvpvouzjbdsri"
+project_id = "cqbnponwkgmjrcufeblo"
+
+[functions.todos]
+verify_jwt = true
