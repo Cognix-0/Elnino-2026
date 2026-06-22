@@ -163,7 +163,7 @@ function BookingPage() {
   }
 
   return (
-    <main className="container mx-auto px-6 py-10">
+    <main className="container mx-auto px-6 py-10 max-w-6xl">
       <button
         onClick={() => navigate({ to: "/dashboard" })}
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground cursor-pointer"
@@ -179,58 +179,146 @@ function BookingPage() {
         </p>
       </header>
 
-      {myBooking && (
-        <div className="mb-6 glass-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5 border border-orange-500/20 bg-orange-500/5 shadow-[0_0_15px_rgba(249,115,22,0.05)]">
-          <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-orange-500/80">Your reserved seat</div>
-            <div className="mt-1 font-display text-xl font-semibold">
-              Bus {myBooking.bus_id} · Seat {myBooking.seat_number}
+      {/* Main Layout Grid: 2 Columns on desktop (lg:grid-cols-[1.1fr_0.9fr]), 1 Column on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+        
+        {/* Left Side: Bus Selection Tabs & Seat Map */}
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {buses?.map((b) => {
+              const count = takenByBus.get(b.id)?.size ?? 0;
+              const isActive = activeBus === b.id;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => setActiveBus(b.id)}
+                  className={`rounded-xl border px-4 py-2 text-sm transition cursor-pointer ${
+                    isActive
+                      ? "border-orange-500 bg-orange-500/10 text-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.15)]"
+                      : "border-border/60 text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span className="font-medium">{b.name}</span>
+                  <span className="ml-2 text-xs opacity-70">
+                    {count}/{b.capacity}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="glass-card rounded-2xl p-6 relative overflow-hidden">
+            {/* Soft Ambient blue glow backgrounds */}
+            <div className="absolute -top-40 -left-40 h-80 w-80 rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
+            <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+            
+            <Legend />
+            <SeatGrid
+              busId={activeBus}
+              taken={takenByBus.get(activeBus) ?? new Map()}
+              myUserId={user.id}
+              loading={bookingsLoading}
+              disabled={submitting || !!myBooking}
+              onPick={handlePickSeat}
+            />
+          </div>
+        </div>
+
+        {/* Right Side: Premium Sidebar (Digital Boarding Ticket & Guidelines) */}
+        <div className="space-y-6">
+          {myBooking ? (
+            <div className="glass-card rounded-2xl border border-orange-500/20 bg-orange-500/5 shadow-[0_0_25px_rgba(249,115,22,0.08)] p-6 relative overflow-hidden">
+              {/* Ticket cut-outs visual effect */}
+              <div className="absolute top-1/2 -left-3 h-6 w-6 rounded-full bg-slate-950 border border-slate-900" />
+              <div className="absolute top-1/2 -right-3 h-6 w-6 rounded-full bg-slate-950 border border-slate-900" />
+              
+              <div className="text-[10px] font-bold uppercase tracking-widest text-orange-500 mb-4">
+                BOARDING TICKET
+              </div>
+              
+              <h2 className="font-display text-2xl font-bold text-slate-100 mb-6">
+                Badulla Batch Trip
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-sm border-b border-dashed border-slate-800 pb-5 mb-5">
+                <div>
+                  <span className="text-xs text-slate-500 block">Passenger</span>
+                  <span className="font-semibold text-slate-200 truncate max-w-[160px] block">
+                    {profile?.name || user.email}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">Destination</span>
+                  <span className="font-semibold text-slate-200">Badulla</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">Bus Number</span>
+                  <span className="font-semibold text-orange-400 font-display text-lg">Bus 0{myBooking.bus_id}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">Seat Number</span>
+                  <span className="font-semibold text-orange-400 font-display text-lg">Seat {myBooking.seat_number}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-slate-400 flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <span>Seat Reserved</span>
+                </div>
+                <Button variant="outline" onClick={releaseSeat} disabled={submitting} className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 h-9 px-4 text-xs rounded-xl cursor-pointer">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Release Seat"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="glass-card rounded-2xl p-6 border border-blue-500/10 bg-blue-500/[0.01]">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-blue-400 mb-3">
+                RESERVATION GUIDE
+              </div>
+              <h2 className="text-lg font-semibold text-slate-200 mb-2">Select a Seat to Begin</h2>
+              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                To reserve your seat for the Badulla trip, select any of the available dark blue seats on the bus map. You can toggle between the different buses using the tabs on the left.
+              </p>
+              <div className="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-3">
+                <div className="flex items-start gap-2.5 text-xs text-slate-400">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                  <span>Only one seat can be reserved per student account.</span>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs text-slate-450">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                  <span>You can release your seat at any time to choose a different one.</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Trip Summary Card */}
+          <div className="glass-card rounded-2xl p-6">
+            <h3 className="text-sm font-semibold text-slate-300 mb-4">Trip Details</h3>
+            <div className="space-y-3.5 text-xs">
+              <div className="flex justify-between border-b border-slate-900 pb-2.5">
+                <span className="text-slate-500">Destination</span>
+                <span className="text-slate-300 font-medium">Badulla, Sri Lanka</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-900 pb-2.5">
+                <span className="text-slate-500">Departure Date</span>
+                <span className="text-slate-300 font-medium">11th July 2026</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-900 pb-2.5">
+                <span className="text-slate-500">Host Institution</span>
+                <span className="text-slate-300 font-medium text-right max-w-[200px]">Faculty of Engineering, Ruhuna</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Seat Grid Structure</span>
+                <span className="text-slate-300 font-medium">2 + Aisle + 3 Layout</span>
+              </div>
             </div>
           </div>
-          <Button variant="outline" onClick={releaseSeat} disabled={submitting} className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10">
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Release seat"}
-          </Button>
         </div>
-      )}
 
-      <div className="mb-6 flex flex-wrap gap-2">
-        {buses?.map((b) => {
-          const count = takenByBus.get(b.id)?.size ?? 0;
-          const isActive = activeBus === b.id;
-          return (
-            <button
-              key={b.id}
-              onClick={() => setActiveBus(b.id)}
-              className={`rounded-xl border px-4 py-2 text-sm transition cursor-pointer ${
-                isActive
-                  ? "border-orange-500 bg-orange-500/10 text-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.15)]"
-                  : "border-border/60 text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <span className="font-medium">{b.name}</span>
-              <span className="ml-2 text-xs opacity-70">
-                {count}/{b.capacity}
-              </span>
-            </button>
-          );
-        })}
       </div>
 
-      <div className="glass-card rounded-2xl p-6 relative overflow-hidden">
-        {/* Soft Ambient blue glow backgrounds */}
-        <div className="absolute -top-40 -left-40 h-80 w-80 rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
-        <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
-        
-        <Legend />
-        <SeatGrid
-          busId={activeBus}
-          taken={takenByBus.get(activeBus) ?? new Map()}
-          myUserId={user.id}
-          loading={bookingsLoading}
-          disabled={submitting || !!myBooking}
-          onPick={handlePickSeat}
-        />
-      </div>
 
       {/* Premium Animated Confirmation Modal */}
       <Dialog open={showConfirmModal} onOpenChange={(open) => !confirmLoading && setShowConfirmModal(open)}>
