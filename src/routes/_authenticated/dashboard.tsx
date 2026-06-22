@@ -84,8 +84,10 @@ function Dashboard() {
         <p className="mt-6 text-sm text-muted-foreground">Loading your data…</p>
       )}
 
-      <div className="mt-10 glass-card rounded-2xl p-6 text-sm text-muted-foreground">
-        Bus booking, payment uploads and tickets ship in the next phase. Finish your profile so you're ready to roll.
+      <div className="mt-8">
+        <Button asChild size="lg" className="bg-gradient-ember shadow-ember">
+          <Link to="/ticket">View your ticket →</Link>
+        </Button>
       </div>
     </main>
   );
