@@ -50,7 +50,7 @@ export function SiteHeader() {
               </Button>
               {isAdmin && (
                 <Button asChild variant="ghost" size="sm" className="text-primary">
-                  <Link to="/admin/payments"><Shield className="mr-1.5 h-4 w-4" />Admin</Link>
+                  <Link to="/admin"><Shield className="mr-1.5 h-4 w-4" />Admin</Link>
                 </Button>
               )}
               <Button onClick={signOut} variant="outline" size="sm">
