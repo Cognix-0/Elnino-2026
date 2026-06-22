@@ -42,12 +42,25 @@ function AdminPayments() {
     queryFn: async () => {
       let q = supabase
         .from("payment_slips")
-        .select("id, student_id, payment_type, amount, slip_url, status, uploaded_at, profile:profiles!payment_slips_student_id_fkey(name, email, registration_number, department)")
+        .select("id, student_id, payment_type, amount, slip_url, status, uploaded_at")
         .order("uploaded_at", { ascending: false });
       if (filter !== "all") q = q.eq("status", filter);
       const { data, error } = await q;
       if (error) throw error;
-      return data as unknown as SlipRow[];
+      const rows = data ?? [];
+      const ids = Array.from(new Set(rows.map((r) => r.student_id)));
+      let profilesById: Record<string, SlipRow["profile"]> = {};
+      if (ids.length) {
+        const { data: profs, error: pe } = await supabase
+          .from("profiles")
+          .select("id, name, email, registration_number, department")
+          .in("id", ids);
+        if (pe) throw pe;
+        profilesById = Object.fromEntries(
+          (profs ?? []).map((p) => [p.id, { name: p.name, email: p.email, registration_number: p.registration_number, department: p.department }])
+        );
+      }
+      return rows.map((r) => ({ ...r, profile: profilesById[r.student_id] ?? null })) as unknown as SlipRow[];
     },
   });
 
