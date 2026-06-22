@@ -90,7 +90,7 @@ CREATE POLICY "Admins update slips" ON public.payment_slips FOR UPDATE TO authen
 CREATE TABLE public.buses (
   id INT PRIMARY KEY,
   name TEXT NOT NULL,
-  capacity INT NOT NULL DEFAULT 50,
+  capacity INT NOT NULL DEFAULT 54,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 GRANT SELECT ON public.buses TO authenticated, anon;
@@ -107,7 +107,7 @@ CREATE TABLE public.seat_bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   student_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   bus_id INT NOT NULL REFERENCES public.buses(id),
-  seat_number INT NOT NULL CHECK (seat_number BETWEEN 1 AND 50),
+  seat_number INT NOT NULL CHECK (seat_number BETWEEN 1 AND 54),
   booked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (bus_id, seat_number)
 );

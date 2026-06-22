@@ -1,0 +1,1 @@
+import{o as e}from"./useStore-DsC52wh1.js";import{k as t}from"./index-Clvzyfw0.js";import{t as n}from"./site-header-7Uzq3bOZ.js";var r=e();function i(){return(0,r.jsxs)(`div`,{className:`min-h-screen`,children:[(0,r.jsx)(n,{}),(0,r.jsx)(t,{})]})}export{i as component};

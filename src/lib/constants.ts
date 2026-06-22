@@ -26,4 +26,4 @@ export const LUNCH = ["Chicken", "Fish", "Vegetarian"] as const;
 export const DINNER = ["Rice", "Kottu", "Fried Rice", "Vegetarian"] as const;
 
 export const BUS_COUNT = 8;
-export const BUS_CAPACITY = 50;
+export const BUS_CAPACITY = 54;
