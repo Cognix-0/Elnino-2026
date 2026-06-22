@@ -177,8 +177,11 @@ function SlipCard({
     });
     if (ins.error) { setUploading(false); return toast.error(ins.error.message); }
 
-    const col = type === "advance" ? "advance_payment_status" : "final_payment_status";
-    const upd = await supabase.from("profiles").update({ [col]: "pending" }).eq("id", studentId);
+    const upd = await supabase.from("profiles").update(
+      type === "advance"
+        ? { advance_payment_status: "pending" as const }
+        : { final_payment_status: "pending" as const }
+    ).eq("id", studentId);
     setUploading(false);
     if (upd.error) return toast.error(upd.error.message);
 

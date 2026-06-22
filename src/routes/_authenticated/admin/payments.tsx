@@ -58,10 +58,13 @@ function AdminPayments() {
       .eq("id", slip.id);
     if (e1) return toast.error(e1.message);
 
-    const col = slip.payment_type === "advance" ? "advance_payment_status" : "final_payment_status";
     const { error: e2 } = await supabase
       .from("profiles")
-      .update({ [col]: decision })
+      .update(
+        slip.payment_type === "advance"
+          ? { advance_payment_status: decision }
+          : { final_payment_status: decision }
+      )
       .eq("id", slip.student_id);
     if (e2) return toast.error(e2.message);
 
