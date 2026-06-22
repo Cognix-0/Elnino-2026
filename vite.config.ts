@@ -5,6 +5,11 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { loadEnv } from "vite";
+
+// Load all environment variables from .env file into process.env for local development
+const env = loadEnv(process.env.NODE_ENV || "development", process.cwd(), "");
+Object.assign(process.env, env);
 
 export default defineConfig({
   tanstackStart: {
@@ -17,4 +22,5 @@ export default defineConfig({
     preset: process.env.VERCEL ? "vercel" : undefined,
   },
 });
+
 
