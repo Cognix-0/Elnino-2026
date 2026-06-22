@@ -74,7 +74,7 @@ function Dashboard() {
           status={profile?.advance_payment_status === "approved" ? "todo" : "locked"}
           desc="Choose your bus and seat after your advance payment is approved."
           cta="Choose seat"
-          to="/dashboard"
+          to="/booking"
           disabled={profile?.advance_payment_status !== "approved"}
         />
 

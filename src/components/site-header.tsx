@@ -40,6 +40,9 @@ export function SiteHeader() {
                 <Link to="/payments">Payments</Link>
               </Button>
               <Button asChild variant="ghost" size="sm">
+                <Link to="/booking">Seat</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
                 <Link to="/profile">Profile</Link>
               </Button>
               {isAdmin && (
