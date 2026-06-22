@@ -79,11 +79,11 @@ function ProfilePage() {
     const { error } = await supabase.from("profiles").update({
       name: form.name.trim(),
       registration_number: form.registration_number.trim(),
-      department: form.department as ProfileForm["department"],
-      gender: form.gender as ProfileForm["gender"],
+      department: form.department as "Computer Engineering",
+      gender: form.gender as "Male",
       phone: form.phone.trim(),
-      lunch_preference: form.lunch_preference as ProfileForm["lunch_preference"],
-      dinner_preference: form.dinner_preference as ProfileForm["dinner_preference"],
+      lunch_preference: form.lunch_preference as "Chicken",
+      dinner_preference: form.dinner_preference as "Rice",
     }).eq("id", user.id);
     setSaving(false);
     if (error) return toast.error(error.message);
