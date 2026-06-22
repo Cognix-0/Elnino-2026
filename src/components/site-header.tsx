@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bus, LogOut } from "lucide-react";
+import { Bus, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-role";
 
 export function SiteHeader() {
   const { user } = useAuth();
+  const { data: isAdmin } = useIsAdmin(user?.id);
   const navigate = useNavigate();
 
   const signOut = async () => {
@@ -28,15 +30,23 @@ export function SiteHeader() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1 sm:gap-2">
           {user ? (
             <>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
               <Button asChild variant="ghost" size="sm">
+                <Link to="/payments">Payments</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
                 <Link to="/profile">Profile</Link>
               </Button>
+              {isAdmin && (
+                <Button asChild variant="ghost" size="sm" className="text-primary">
+                  <Link to="/admin/payments"><Shield className="mr-1.5 h-4 w-4" />Admin</Link>
+                </Button>
+              )}
               <Button onClick={signOut} variant="outline" size="sm">
                 <LogOut className="mr-1.5 h-4 w-4" /> Sign out
               </Button>

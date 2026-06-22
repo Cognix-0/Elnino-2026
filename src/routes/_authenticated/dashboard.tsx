@@ -65,7 +65,7 @@ function Dashboard() {
           status={mapPayment(profile?.advance_payment_status)}
           desc={`Pay Rs.${TRIP.advanceAmount.toLocaleString()} and upload your slip to unlock seat booking.`}
           cta="Upload slip"
-          to="/profile"
+          to="/payments"
           disabled={!profileComplete}
         />
         <StepCard
@@ -77,6 +77,7 @@ function Dashboard() {
           to="/dashboard"
           disabled={profile?.advance_payment_status !== "approved"}
         />
+
       </div>
 
       {isLoading && (
